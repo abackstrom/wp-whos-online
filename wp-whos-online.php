@@ -97,7 +97,7 @@ function wpwhosonline_pageoptions_js() {
 ?><script type='text/javascript'>
 // <![CDATA[
 var wpwhosonline = {
-	'ajaxUrl': "<?php echo esc_js( get_bloginfo( 'wpurl' ) . '/wp-admin/admin-ajax.php' ); ?>",
+	'ajaxUrl': "<?php echo esc_js( admin_url('admin-ajax.php') ); ?>",
 	'wpwhosonlineLoadTime': "<?php echo gmdate( 'Y-m-d H:i:s' ); ?>",
 	'getwpwhosonlineUpdate': '0',
 	'isFirstFrontPage': "<?php echo is_home(); ?>"
