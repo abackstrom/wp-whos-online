@@ -127,7 +127,7 @@ jQuery(function($) {
 
 	function toggleUpdates() {
 		if (0 == wpwhosonline.getwpwhosonlineUpdate) {
-			wpwhosonline.getwpwhosonlineUpdate = setInterval(getwpwhosonline, 3000);
+			wpwhosonline.getwpwhosonlineUpdate = setInterval(getwpwhosonline, 30000);
 		} else {
 			clearInterval(wpwhosonline.getwpwhosonlineUpdate);
 			wpwhosonline.getwpwhosonlineUpdate = '0';
