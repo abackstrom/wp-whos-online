@@ -26,12 +26,25 @@ jQuery(function($) {
 		ajaxCheckAuthors = $.getJSON(queryString, function(response){
 			if(typeof response.latestupdate != 'undefined') {
 				wpwhosonline.wpwhosonlineLoadTime = response.latestupdate;
-				for(var i = 0; i < response.authors.length; i++) {
-					$('#wpwhosonline-'+response.authors[i].user_id).
-						text( response.authors[i].wpwhosonline ).
-						data('wpwhosonline_timestamp', response.authors[i].wpwhosonline_unix);
+				for(var i = 0; i < response.users.length; i++) {
+					var current = response.users[i],
+						$o = $('#wpwhosonline-' + current.user_id);
+
+					console.dir(current.user_id, current.timestamp);
+
+					if( $o.length == 0 ) {
+						$o = $('<li/>').attr('id', 'wpwhosonline-' + current.user_id).
+							addClass( 'wpwhosonline-row wpwhosonline-active' ).
+							prependTo( '.wpwhosonline-list' );
+						console.log($o);
+					}
+
+					$o.html( current.html ).
+						data('wpwhosonline', current.timestamp);
 				}
 			}
+
+			console.log('Done');
 		});
 
 		toggleUpdates();
@@ -80,53 +93,42 @@ jQuery(function($) {
 	function updateRecents(){
 		var now = Math.round(new Date().getTime()/1000.0);
 
-		var fresh = 120; // 2 minutes
-		var old = 600; // 10 minutes
+		var active = 120; // 2 minutes
+		var recent = 600; // 10 minutes
 		var ancient = 7200; // 2 hours
 
-		$('.widget_wpwhosonline span').each(function(){
+		$('.wpwhosonline-row').each(function(){
 			var $o = $(this);
-			var since, oclass;
+			var since, oclass, remove;
 
-			var last = $o.data('wpwhosonline_timestamp');
-
-			// last will be undefined the first time through
-			if( last == null ) {
-				var theText = $o.text();
-
-				if( theText == 'Online now!' ) {
-					last = now;
-				} else {
-					last = Date.parse($o.text()) / 1000;
-				}
-			}
-
+			var last = $o.data('wpwhosonline');
 			since = now - last;
 
 			if(since > ancient) {
-				oclass = "ancient";
-			} else if(since > old) {
-				oclass = "recent";
+				oclass = "wpwhosonline-ancient";
+				remove = "wpwhosonline-recent wpwhosonline-active";
+			} else if(since > recent) {
+				oclass = "wpwhosonline-recent";
+				remove = "wpwhosonline-ancient wpwhosonline-active";
 			} else {
-				oclass = "active";
+				oclass = "wpwhosonline-active";
+				remove = "wpwhosonline-ancient wpwhosonline-recent";
 
-				// no longer fresh; remove "Online now!' text
-				if(since > fresh && $o.text() == 'Online now!' ) {
+				// no longer active; remove "Online now!' text
+				if(since > active && $o.text() == 'Online now!' ) {
 					var theDate = new Date(last * 1000);
 					$o.text( formatDate(theDate, 'dd mmm yyyy HH:MM:ss') );
-					console.log( $o.text() );
 				}
 			}
 
-			$o.attr('class', oclass);
+			$o.addClass( oclass ).removeClass( remove );
 		});
 	}
 
 	function toggleUpdates() {
 		if (0 == wpwhosonline.getwpwhosonlineUpdate) {
-			wpwhosonline.getwpwhosonlineUpdate = setInterval(getwpwhosonline, 30000);
-		}
-		else {
+			wpwhosonline.getwpwhosonlineUpdate = setInterval(getwpwhosonline, 3000);
+		} else {
 			clearInterval(wpwhosonline.getwpwhosonlineUpdate);
 			wpwhosonline.getwpwhosonlineUpdate = '0';
 		}

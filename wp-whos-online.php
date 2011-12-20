@@ -25,8 +25,6 @@ License: GPL2
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-add_action('template_redirect', 'wpwhosonline_update');
-
 function wpwhosonline_enqueue() {
 	add_action( 'wp_head', 'wpwhosonline_pageoptions_js', 20 );
 
@@ -53,6 +51,7 @@ function wpwhosonline_update() {
 
 	update_user_meta( $user_ID, 'wpwhosonline_timestamp', time() );
 }//end wpwhosonline_update
+add_action('template_redirect', 'wpwhosonline_update');
 
 /**
  * Echo json listing all authors who have had their "last online" timestamp updated
@@ -65,29 +64,31 @@ function wpwhosonline_ajax_update() {
 	wpwhosonline_update();
 
 	$load_time = strtotime($_GET['load_time'] . ' GMT');
-	$authors = $wpdb->get_results($wpdb->prepare("SELECT user_id, meta_value AS wpwhosonline FROM $wpdb->usermeta
-		WHERE meta_key = 'wpwhosonline_timestamp' AND meta_value > %d", $load_time));
+	$users = wpwhosonline_recents( "meta_value=$load_time" );
 
-	if( count($authors) == 0 ) {
+	if( count($users) == 0 ) {
 		die( '0' );
 	}
 
 	$now = time();
 
 	$latest = 0;
-	foreach($authors as $author) {
-		if( $author->wpwhosonline > $latest )
-			$latest = $author->wpwhosonline;
+	$return = array();
+	foreach($users as $user) {
+		$row = array();
 
-		$author->wpwhosonline_unix = (int)$author->wpwhosonline;
-		if( $now - $author->wpwhosonline_unix < 120 ) {
-			$author->wpwhosonline = 'Online now!';
-		} else {
-			$author->wpwhosonline = strftime( '%d %b %Y %H:%M:%S %Z', $author->wpwhosonline );
-		}
+		$last_online_ts = get_user_meta( $user->ID, 'wpwhosonline_timestamp', true );
+		if( $last_online_ts > $latest )
+			$latest = $last_online_ts;
+
+		$row['user_id'] = $user->ID;
+		$row['html'] = wpwhosonline_user( $last_online_ts, $user );
+		$row['timestamp'] = $last_online_ts;
+
+		$return[] = $row;
 	}
 
-	echo json_encode( array('authors' => $authors, 'latestupdate' => gmdate('Y-m-d H:i:s', $latest)) );
+	echo json_encode( array('users' => $return, 'latestupdate' => gmdate('Y-m-d H:i:s', $latest)) );
 	exit;
 }
 
@@ -105,119 +106,89 @@ var wpwhosonline = {
 </script><?php
 }
 
-/**
- * Custom version of wp_list_authors() for the wp-whos-online plugin.
- *
- * optioncount (boolean) (false): Show the count in parenthesis next to the
- *		author's name.
- * exclude_admin (boolean) (true): Exclude the 'admin' user that is installed by
- *		default.
- * show_fullname (boolean) (false): Show their full names.
- * hide_empty (boolean) (true): Don't show authors without any posts.
- * feed (string) (''): If isn't empty, show links to author's feeds.
- * feed_image (string) (''): If isn't empty, use this image to link to feeds.
- * echo (boolean) (true): Set to false to return the output, instead of echoing.
- * avatar_size' => 
- *
- * @param array $args The argument array.
- * @return null|string The output, if echo is set to false.
- */
-function wpwhosonline_list_authors($args = '') {
-	global $wpdb;
+function wpwhosonline_usersort( $a, $b ) {
+	$ts_a = get_user_meta( $a->ID, 'wpwhosonline_timestamp', true );
+	$ts_b = get_user_meta( $b->ID, 'wpwhosonline_timestamp', true );
 
-	$defaults = array(
-		'optioncount' => false, 'exclude_admin' => true,
-		'show_fullname' => false, 'hide_empty' => true,
-		'feed' => '', 'feed_image' => '', 'feed_type' => '', 'echo' => true,
-		'avatar_size' => 0, 'wpwhosonline' => 0
-	);
-
-	$r = wp_parse_args( $args, $defaults );
-	extract($r, EXTR_SKIP);
-
-	$return = '';
-
-	/** @todo Move select to get_authors(). */
-	$authors = $wpdb->get_results("SELECT ID, user_nicename from $wpdb->users " . ($exclude_admin ? "WHERE user_login <> 'admin' " : '') . "ORDER BY display_name");
-
-	$author_count = array();
-	foreach ((array) $wpdb->get_results("SELECT DISTINCT post_author, COUNT(ID) AS count FROM $wpdb->posts WHERE post_type = 'post' AND " . get_private_posts_cap_sql( 'post' ) . " GROUP BY post_author") as $row) {
-		$author_count[$row->post_author] = $row->count;
+	if( $ts_a == $ts_b ) {
+		return 0;
 	}
 
-	foreach ( (array) $authors as $author ) {
-		$author = get_userdata( $author->ID );
-		$posts = (isset($author_count[$author->ID])) ? $author_count[$author->ID] : 0;
-		$name = $author->display_name;
+	return ($ts_a < $ts_b) ? 1 : -1;
+}
 
-		if ( $show_fullname && ($author->first_name != '' && $author->last_name != '') )
-			$name = "$author->first_name $author->last_name";
+function wpwhosonline_recents( $args = array() ) {
+	$args = wp_parse_args( $args, array(
+		'meta_key' => 'wpwhosonline_timestamp',
+		'meta_value' => time() - 604800, // 1 week
+		'meta_compare' => '>',
+		'count_total' => false,
+	));
 
-		if ( $avatar_size > 0 )
-			$name = get_avatar( $author->ID, $avatar_size) . " " . $name;
-
-		if ( !($posts == 0 && $hide_empty) ) {
-			$return .= '<li>';
-		}
-
-		if ( $posts == 0 ) {
-			if ( !$hide_empty )
-				$link = $name;
-		} else {
-			$link = '<a href="' . get_author_posts_url($author->ID, $author->user_nicename) . '" title="' . sprintf(__("Posts by %s"), esc_attr($author->display_name)) . '">' . $name . '</a>';
-
-			if ( (! empty($feed_image)) || (! empty($feed)) ) {
-				$link .= ' ';
-				if (empty($feed_image))
-					$link .= '(';
-				$link .= '<a href="' . get_author_feed_link($author->ID) . '"';
-
-				if ( !empty($feed) ) {
-					$title = ' title="' . $feed . '"';
-					$alt = ' alt="' . $feed . '"';
-					$name = $feed;
-					$link .= $title;
-				}
-
-				$link .= '>';
-
-				if ( !empty($feed_image) )
-					$link .= "<img src=\"$feed_image\" style=\"border: none;\"$alt$title" . ' />';
-				else
-					$link .= $name;
-
-				$link .= '</a>';
-
-				if ( empty($feed_image) )
-					$link .= ')';
-			}
-
-			if ( $optioncount )
-				$link .= ' ('. $posts . ')';
-		}
-
-		if ( $wpwhosonline ) {
-			$now = time();
-
-			$wpwhosonline_time = get_user_meta( $author->ID, 'wpwhosonline_timestamp', true );
-			if( $wpwhosonline_time ) {
-				if( $now - $wpwhosonline_time < 120 ) {
-					$wpwhosonline_time = 'Online now!';
-				} else {
-					$wpwhosonline_time = strftime( '%d %b %Y %H:%M:%S %Z', $wpwhosonline_time );
-				}
-			} else {
-				$wpwhosonline_time = '';
-			}
-			$link .= '<br /><span id="wpwhosonline-' . $author->ID . '" title="Last online timestamp">' . $wpwhosonline_time . '</span>';
-		}
-
-		if ( !($posts == 0 && $hide_empty) )
-			$return .= $link . '</li>';
+	$users = get_users( $args );
+	foreach( $users as $user ) {
+		// grab all these values, or you'll anger usort by modifying
+		// an array mid-execution.
+		get_user_meta( $user->ID, 'wpwhosonline_timestamp', true );
 	}
-	if ( !$echo )
-		return $return;
-	echo $return;
+	usort( $users, 'wpwhosonline_usersort' );
+
+	return $users;
+}
+
+function wpwhosonline_list_authors() {
+	$users = wpwhosonline_recents();
+
+	$html = '<ul class="wpwhosonline-list">';
+	foreach( $users as $user ) {
+		$last_online_ts = get_user_meta( $user->ID, 'wpwhosonline_timestamp', true );
+		$item = wpwhosonline_user( $last_online_ts, $user );
+		$class = wpwhosonline_class( $last_online_ts );
+
+		$item = '<li id="wpwhosonline-' . $user->ID . '" class="wpwhosonline-row ' . $class . '" data-wpwhosonline="' .
+			esc_attr( $last_online_ts ) . '">' . $item . '</li>';
+		$html .= $item;
+	}
+	$html .= '</ul>';
+
+	echo $html;
+}
+
+function wpwhosonline_user( $last_online_ts, $user ) {
+	$avatar = get_avatar( $user->user_email, 32, 'monsterid' );
+	$name = $user->display_name;
+	$link = '<a href="' . get_author_posts_url( $user->ID, $user->user_nicename ) . '" title="' . esc_attr( sprintf(__("Posts by %s"), $user->display_name) ) . '">' . $name . '</a>';
+
+	// this should always exist; we queried using this meta
+	if( ! $last_online_ts ) {
+		continue;
+	}
+
+	$now = time();
+	if( $now - $last_online_ts < 120 ) {
+		$last_online = 'Online now!';
+	} else {
+		$last_online = human_time_diff( $now, $last_online_ts ) . ' ago';
+	}
+
+	$last_online_title = date_i18n( get_option('date_format') . ' ' . get_option('time_format'), $last_online_ts );
+
+	if( $last_online ) {
+		$last_online = '<span title="Last online: ' . esc_attr( $last_online_title ) . '">' . $last_online . '</a>';
+	}
+
+	return $avatar . $link . '<br>' . $last_online;
+}
+
+function wpwhosonline_class( $lastonline ) {
+	$diff = time() - $lastonline;
+	if( $diff > 7200 ) {
+		return 'wpwhosonline-ancient';
+	} elseif( $diff > 600 ) {
+		return 'wpwhosonline-recent';
+	} else {
+		return 'wpwhosonline-active';
+	}
 }
 
 function widget_wpwhosonline_init() {
@@ -234,7 +205,7 @@ function widget_wpwhosonline_init() {
     echo $before_widget . $before_title . "Users" . $after_title;
 ?>
 <ul>
-<?php wpwhosonline_list_authors('optioncount=1&exclude_admin=0&show_fullname=1&hide_empty=0&avatar_size=32&wpwhosonline=1'); ?>
+<?php wpwhosonline_list_authors(); ?>
 </ul>
 <?php
     echo $after_widget;

@@ -1,10 +1,26 @@
-.widget_wpwhosonline .active { font-weight: bold; color: green; }
-.widget_wpwhosonline .recent { }
-.widget_wpwhosonline .ancient { font-style: italic; color: red; }
-.widget_wpwhosonline ul li { float: none; width: auto; height: 33px; }
-.widget_wpwhosonline h2 {}
-.widget_wpwhosonline ul li strong {}
-.widget_wpwhosonline ul li img.avatar { float: left; margin-right: 1ex; }
+.wpwhosonline-row {
+	float: none;
+	width: auto;
+	height: 33px;
+}
+
+.wpwhosonline-row > img {
+	float: left;
+	margin-right: 1ex;
+}
+
+.wpwhosonline-active > span {
+	font-weight: bold;
+	color: green;
+}
+
+.wpwhosonline-recent > span {
+}
+
+.wpwhosonline-ancient > span {
+	font-style: italic;
+	color: red;
+}
 
 /* kubrick style follows */
 #sidebar ul li.widget_wpwhosonline ul li:before { content: none; }
