@@ -155,7 +155,7 @@ function wpwhosonline_list_authors() {
 }
 
 function wpwhosonline_user( $last_online_ts, $user ) {
-	$avatar = get_avatar( $user->user_email, 32, 'monsterid' );
+	$avatar = get_avatar( $user->user_email, 32 );
 	$name = $user->display_name;
 	$link = '<a href="' . get_author_posts_url( $user->ID, $user->user_nicename ) . '" title="' . esc_attr( sprintf(__("Posts by %s"), $user->display_name) ) . '">' . $name . '</a>';
 
