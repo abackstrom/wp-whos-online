@@ -3,7 +3,7 @@
 Plugin Name: Who's Online
 Plugin URI: http://www.plymouth.edu/
 Description: Sidebar widget to log when a user was last online
-Version: 0.1
+Version: 0.5.1
 Author: Adam Backstrom
 Author URI: http://blogs.bwerp.net/
 License: GPL2

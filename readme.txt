@@ -3,7 +3,7 @@
 Contributors: adambackstrom
 Tags: p2
 Tested up to: 3.3
-Stable tag: 0.5
+Stable tag: 0.5.1
 
 Who's reading your P2 blog right now? Keep track.
 
