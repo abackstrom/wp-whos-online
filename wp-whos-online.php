@@ -3,7 +3,7 @@
 Plugin Name: Who's Online
 Plugin URI: http://www.plymouth.edu/
 Description: Sidebar widget to log when a user was last online
-Version: 0.5.1
+Version: 0.6-dev
 Author: Adam Backstrom
 Author URI: http://blogs.bwerp.net/
 License: GPL2
@@ -139,7 +139,8 @@ function wpwhosonline_recents( $args = array() ) {
 function wpwhosonline_list_authors() {
 	$users = wpwhosonline_recents();
 
-	$html = '<ul class="wpwhosonline-list">';
+	$html = '';
+
 	foreach( $users as $user ) {
 		$last_online_ts = get_user_meta( $user->ID, 'wpwhosonline_timestamp', true );
 		$item = wpwhosonline_user( $last_online_ts, $user );
@@ -149,7 +150,6 @@ function wpwhosonline_list_authors() {
 			esc_attr( $last_online_ts ) . '">' . $item . '</li>';
 		$html .= $item;
 	}
-	$html .= '</ul>';
 
 	echo $html;
 }
@@ -204,7 +204,7 @@ function widget_wpwhosonline_init() {
 
     echo $before_widget . $before_title . "Users" . $after_title;
 ?>
-<ul>
+<ul class="wpwhosonline-list">
 <?php wpwhosonline_list_authors(); ?>
 </ul>
 <?php
