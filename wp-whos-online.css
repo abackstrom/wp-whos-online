@@ -8,11 +8,11 @@
 	float: none;
 	width: auto;
 	height: 33px;
-	margin-bottom: 1ex;
+	clear: both;
 }
 
 .wpwhosonline-row > img {
-	float: left;
+	float: left !important;
 	margin-right: 1ex;
 }
 
