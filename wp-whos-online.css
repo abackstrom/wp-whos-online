@@ -1,7 +1,14 @@
+.wpwhosonline-list {
+	list-style: none !important;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+
 .wpwhosonline-row {
 	float: none;
 	width: auto;
 	height: 33px;
+	margin-bottom: 1ex;
 }
 
 .wpwhosonline-row > img {
