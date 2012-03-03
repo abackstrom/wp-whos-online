@@ -1,7 +1,7 @@
 === Who's Online ===
 
-Contributors: adambackstrom
-Tags: p2
+Contributors: abackstrom
+Tags: p2, widget
 Tested up to: 3.3
 Requires at least: 3.1
 Stable tag: 0.5.1
