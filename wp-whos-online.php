@@ -1,18 +1,18 @@
 <?php
 /*
 Plugin Name: Who's Online
-Plugin URI: http://www.plymouth.edu/
+Plugin URI: http://wordpress.org/extend/plugins/wp-whos-online/
 Description: Sidebar widget to log when a user was last online
-Version: 0.6-dev
+Version: 0.6
 Author: Adam Backstrom
-Author URI: http://blogs.bwerp.net/
+Author URI: http://sixohthree.com/
 License: GPL2
 */
 
 /*  Copyright 2011  Adam Backstrom <adam@sixohthree.com>
 
     This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, version 2, as 
+    it under the terms of the GNU General Public License, version 2, as
     published by the Free Software Foundation.
 
     This program is distributed in the hope that it will be useful,
@@ -154,18 +154,26 @@ function wpwhosonline_list_authors() {
 	echo $html;
 }
 
+/**
+ * Return HTML for a single blog user for the widget.
+ *
+ * @uses apply_filters() Calls 'wpwhosonline_author_link' on the author link element
+ * @return string HTML for the user row
+ */
 function wpwhosonline_user( $last_online_ts, $user ) {
 	$avatar = get_avatar( $user->user_email, 32 );
 	$name = $user->display_name;
 	$link = '<a href="' . get_author_posts_url( $user->ID, $user->user_nicename ) . '" title="' . esc_attr( sprintf(__("Posts by %s"), $user->display_name) ) . '">' . $name . '</a>';
 
+	$link = apply_filters( 'wpwhosonline_author_link', $link, $user );
+
 	// this should always exist; we queried using this meta
-	if( ! $last_online_ts ) {
+	if ( ! $last_online_ts ) {
 		continue;
 	}
 
 	$now = time();
-	if( $now - $last_online_ts < 120 ) {
+	if ( $now - $last_online_ts < 120 ) {
 		$last_online = 'Online now!';
 	} else {
 		$last_online = human_time_diff( $now, $last_online_ts ) . ' ago';
@@ -173,7 +181,7 @@ function wpwhosonline_user( $last_online_ts, $user ) {
 
 	$last_online_title = date_i18n( get_option('date_format') . ' ' . get_option('time_format'), $last_online_ts );
 
-	if( $last_online ) {
+	if ( $last_online ) {
 		$last_online = '<span title="Last online: ' . esc_attr( $last_online_title ) . '">' . $last_online . '</a>';
 	}
 
