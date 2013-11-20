@@ -30,21 +30,16 @@ jQuery(function($) {
 					var current = response.users[i],
 						$o = $('#wpwhosonline-' + current.user_id);
 
-					console.dir(current.user_id, current.timestamp);
-
 					if( $o.length == 0 ) {
 						$o = $('<li/>').attr('id', 'wpwhosonline-' + current.user_id).
 							addClass( 'wpwhosonline-row wpwhosonline-active' ).
 							prependTo( '.wpwhosonline-list' );
-						console.log($o);
 					}
 
 					$o.html( current.html ).
 						data('wpwhosonline', current.timestamp);
 				}
 			}
-
-			console.log('Done');
 		});
 
 		toggleUpdates();
