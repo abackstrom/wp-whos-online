@@ -2,9 +2,9 @@
 
 Contributors: abackstrom
 Tags: p2, widget
-Tested up to: 3.3
+Tested up to: 4.1.1
 Requires at least: 3.1
-Stable tag: 0.6
+Stable tag: 0.7
 
 Who's reading your P2 blog right now? Keep track.
 
@@ -32,6 +32,10 @@ be added to the top if they come online.
 1. "Who's Online" in a P2 blog.
 
 == Changelog ==
+
+= 0.7 =
+
+* Migrate to WordPress 2.8 widget API
 
 = 0.6 =
 

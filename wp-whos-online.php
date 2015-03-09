@@ -3,13 +3,13 @@
 Plugin Name: Who's Online
 Plugin URI: http://wordpress.org/extend/plugins/wp-whos-online/
 Description: Sidebar widget to log when a user was last online
-Version: 0.6
-Author: Adam Backstrom
-Author URI: http://sixohthree.com/
+Version: 0.7
+Author: Annika Backstrom
+Author URI: https://sixohthree.com/
 License: GPL2
 */
 
-/*  Copyright 2011  Adam Backstrom <adam@sixohthree.com>
+/*  Copyright 2011  Annika Backstrom <annika@sixohthree.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as
@@ -24,6 +24,33 @@ License: GPL2
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
+class WP_Whos_Online_Widget extends WP_Widget {
+	public function __construct() {
+		parent::__construct(
+			'widget_wpwhosonline', "Who's Online", "Who's reading your P2 blog right now? Keep track."
+		);
+	}
+
+	public function widget( $args, $instance ) {
+		echo $args['before_widget'] . $args['before_title'] . "Users" . $args['after_title'];
+		echo '<ul class="wpwhosonline-list">';
+		wpwhosonline_list_authors();
+		echo '</ul>';
+		echo $args['after_widget'];
+	}
+
+	public static function register() {
+		register_widget( __CLASS__ );
+	}
+
+	public function form( $instance ) {
+	}
+
+	public function update( $new_instance, $old_instance ) {
+		return $new_instance;
+	}
+}
 
 function wpwhosonline_enqueue() {
 	add_action( 'wp_head', 'wpwhosonline_pageoptions_js', 20 );
@@ -199,30 +226,4 @@ function wpwhosonline_class( $lastonline ) {
 	}
 }
 
-function widget_wpwhosonline_init() {
-
-  // Check for the required plugin functions. This will prevent fatal
-  // errors occurring when you deactivate the dynamic-sidebar plugin.
-  if ( !function_exists('wp_register_sidebar_widget') )
-    return;
-
-  // This is the function that outputs the Authors code.
-  function widget_wpwhosonline($args) {
-    extract($args);
-
-    echo $before_widget . $before_title . "Users" . $after_title;
-?>
-<ul class="wpwhosonline-list">
-<?php wpwhosonline_list_authors(); ?>
-</ul>
-<?php
-    echo $after_widget;
-  }
-
-  // This registers our widget so it appears with the other available
-  // widgets and can be dragged and dropped into any active sidebars.
-  wp_register_sidebar_widget( 'widget_wpwhosonline', "Who's Online", 'widget_wpwhosonline' );
-}
-
-// Run our code later in case this loads prior to any required plugins.
-add_action('plugins_loaded', 'widget_wpwhosonline_init');
+add_action( 'widgets_init', 'WP_Whos_Online_Widget::register' );
