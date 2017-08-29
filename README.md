@@ -2,9 +2,9 @@
 
 Contributors: abackstrom
 Tags: p2, widget
-Tested up to: 4.1.1
+Tested up to: 4.8.1
 Requires at least: 3.1
-Stable tag: 0.7
+Stable tag: 0.7.1
 
 Who's reading your P2 blog right now? Keep track.
 
