@@ -33,6 +33,10 @@ be added to the top if they come online.
 
 == Changelog ==
 
+= 0.7.1 =
+
+* Compatibility fix for PHP 7.0
+
 = 0.7 =
 
 * Migrate to WordPress 2.8 widget API
