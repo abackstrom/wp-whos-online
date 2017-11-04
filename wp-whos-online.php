@@ -7,6 +7,8 @@ Version: 0.7.1
 Author: Annika Backstrom
 Author URI: https://sixohthree.com/
 License: GPL2
+Text Domain: wp-whos-online
+Domain Path: /languages/
 */
 
 /*  Copyright 2011  Annika Backstrom <annika@sixohthree.com>
@@ -27,13 +29,14 @@ License: GPL2
 
 class WP_Whos_Online_Widget extends WP_Widget {
 	public function __construct() {
+
 		parent::__construct(
-			'widget_wpwhosonline', "Who's Online", "Who's reading your P2 blog right now? Keep track."
+			'widget_wpwhosonline', "Who's Online", __("Who's reading your P2 blog right now? Keep track.", 'wp-whos-online')
 		);
 	}
 
 	public function widget( $args, $instance ) {
-		echo $args['before_widget'] . $args['before_title'] . "Users" . $args['after_title'];
+		echo $args['before_widget'] . $args['before_title'] . __("Users", 'wp-whos-online') . $args['after_title'];
 		echo '<ul class="wpwhosonline-list">';
 		wpwhosonline_list_authors();
 		echo '</ul>';
@@ -66,6 +69,15 @@ add_action( 'wp_ajax_wpwhosonline_ajax_update', 'wpwhosonline_ajax_update' );
 // hook into p2 ajax calls, if they're there
 add_action( 'wp_ajax_prologue_latest_posts', 'wpwhosonline_update' );
 add_action( 'wp_ajax_prologue_latest_comments', 'wpwhosonline_update' );
+
+add_action( 'plugins_loaded', 'wpwhosonline_textdomain', 99 );
+
+/**
+ * Load the plugin's textdomain.
+ */
+function wpwhosonline_textdomain() {
+	load_plugin_textdomain( 'wp-whos-online', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+}
 
 /**
  * Update a user's "last online" timestamp.
@@ -201,15 +213,16 @@ function wpwhosonline_user( $last_online_ts, $user ) {
 
 	$now = time();
 	if ( $now - $last_online_ts < 120 ) {
-		$last_online = 'Online now!';
+		$last_online = __('Online now!', 'wp-whos-online');
 	} else {
-		$last_online = human_time_diff( $now, $last_online_ts ) . ' ago';
+		$last_online = sprintf( __('%s ago', 'wp-whos-online'), human_time_diff( $now, $last_online_ts ) );
 	}
 
 	$last_online_title = date_i18n( get_option('date_format') . ' ' . get_option('time_format'), $last_online_ts );
 
 	if ( $last_online ) {
-		$last_online = '<span title="Last online: ' . esc_attr( $last_online_title ) . '">' . $last_online . '</a>';
+		$last_online_title = sprintf( __( 'Last online: %s', 'wp-whos-online' ), $last_online_title );
+		$last_online = '<span title="' . esc_attr( $last_online_title ) . '">' . $last_online . '</a>';
 	}
 
 	return $avatar . $link . '<br>' . $last_online;

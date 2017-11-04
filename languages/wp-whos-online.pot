@@ -1,0 +1,57 @@
+# Copyright (C) 2017 Who's Online
+# This file is distributed under the same license as the Who's Online package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Who's Online 0.7.2\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-whos-online\n"
+"POT-Creation-Date: 2017-11-04 15:47:32+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2017-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: wp-whos-online.php:36
+msgid "Who's reading your P2 blog right now? Keep track."
+msgstr ""
+
+#: wp-whos-online.php:41
+msgid "Users"
+msgstr ""
+
+#: wp-whos-online.php:198
+msgid "Posts by %s"
+msgstr ""
+
+#: wp-whos-online.php:209
+msgid "Online now!"
+msgstr ""
+
+#: wp-whos-online.php:211
+msgid "%s ago"
+msgstr ""
+
+#: wp-whos-online.php:217
+msgid "Last online: %s"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "Who's Online"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://wordpress.org/extend/plugins/wp-whos-online/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Sidebar widget to log when a user was last online"
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Annika Backstrom"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://sixohthree.com/"
+msgstr ""
