@@ -3,7 +3,7 @@
 Plugin Name: Who's Online
 Plugin URI: http://wordpress.org/extend/plugins/wp-whos-online/
 Description: Sidebar widget to log when a user was last online
-Version: 0.7.1
+Version: 0.7.2
 Author: Annika Backstrom
 Author URI: https://sixohthree.com/
 License: GPL2
