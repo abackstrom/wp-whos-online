@@ -37,6 +37,7 @@ fi
 
 cd ..
 cp -v *.php *.css *.js *.jpg LICENSE "$WORKING/trunk"
+rsync -av --delete languages/ "$WORKING/trunk/languages/"
 cp -v README.md "$WORKING/trunk/readme.txt"
 cp -v assets/* "$WORKING/assets"
 
