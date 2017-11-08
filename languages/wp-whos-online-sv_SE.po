@@ -1,0 +1,58 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Who's Online 0.7.2\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-whos-online\n"
+"POT-Creation-Date: 2017-11-04 15:47:32+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2017-11-07 11:04+0000\n"
+"Last-Translator: Webmaster Admin <info@mesas.se>\n"
+"Language-Team: Swedish\n"
+"Language: sv-SE\n"
+"Plural-Forms: nplurals=2; plural=n != 1\n"
+"X-Generator: Loco - https://localise.biz/"
+
+#: wp-whos-online.php:36
+msgid "Who's reading your P2 blog right now? Keep track."
+msgstr "Vem läser din blogg just nu? Håll koll."
+
+#. Plugin Name of the plugin/theme
+msgid "Who's Online"
+msgstr "Who's Online"
+
+#. Plugin URI of the plugin/theme
+msgid "http://wordpress.org/extend/plugins/wp-whos-online/"
+msgstr "http://wordpress.org/extend/plugins/wp-whos-online/"
+
+#. Description of the plugin/theme
+msgid "Sidebar widget to log when a user was last online"
+msgstr "Sidofälts widget för loggning när användare senaste var online"
+
+#. Author of the plugin/theme
+msgid "Annika Backstrom"
+msgstr "Annika Backstrom"
+
+#. Author URI of the plugin/theme
+msgid "https://sixohthree.com/"
+msgstr "https://sixohthree.com/"
+
+#: wp-whos-online.php:41
+msgid "Users"
+msgstr "Medlemmar Online"
+
+#: wp-whos-online.php:198
+msgid "Posts by %s"
+msgstr "Inlägg av %s"
+
+#: wp-whos-online.php:209
+msgid "Online now!"
+msgstr "Online nu!"
+
+#: wp-whos-online.php:211
+msgid "%s ago"
+msgstr "%s sedan"
+
+#: wp-whos-online.php:217
+msgid "Last online: %s"
+msgstr "Senast online: %s"
