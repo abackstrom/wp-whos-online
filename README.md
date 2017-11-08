@@ -4,7 +4,7 @@ Contributors: abackstrom
 Tags: p2, widget
 Tested up to: 4.8.1
 Requires at least: 3.1
-Stable tag: 0.7.2
+Stable tag: 0.7.3
 
 Who's reading your P2 blog right now? Keep track.
 
@@ -32,6 +32,10 @@ be added to the top if they come online.
 1. "Who's Online" in a P2 blog.
 
 == Changelog ==
+
+= 0.7.3 =
+
+* Add Swedish translation, props Per Söderman
 
 = 0.7.2 =
 
